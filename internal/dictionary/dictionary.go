@@ -68,7 +68,7 @@ func (d *Dictionary) Parse(lang int, msg string) string {
 			for _, word := range parseString(msg) {
 				v, ok := d.dictionaryRu[word]
 				if ok {
-					res += v
+					res += v + " "
 				} else {
 					res += " (not valid - '" + word + "' ) "
 				}
@@ -99,7 +99,7 @@ func (d *Dictionary) Parse(lang int, msg string) string {
 			for _, word := range strings.Split(msg, "") {
 				v, ok := d.dictionaryEnMorze[strings.ToUpper(word)]
 				if ok {
-					res += v
+					res += v + " "
 				} else {
 					res += " (not valid - '" + word + "' ) "
 				}
