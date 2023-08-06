@@ -23,90 +23,65 @@ func NewDictionary(mod int) *Dictionary {
 }
 
 func (d *Dictionary) ParseByWorld(lang int, msg string) string {
-	if lang == 1 {
-		if d.mod == 0 {
-			v, ok := d.dictionaryRu[msg]
-			if ok {
-				return v
-			}
-		} else {
-			res := ""
-			for _, w := range strings.Split(msg, "") {
-				v, ok := d.dictionaryRuMorze[strings.ToUpper(w)]
-				if ok {
-					res += v
-					res += " "
-				}
-			}
-			return res
+	dict := d.selectMap(lang)
+	if d.mod == 0 {
+		v, ok := dict[msg]
+		if ok {
+			return v
 		}
 	} else {
-		if d.mod == 0 {
-			v, ok := d.dictionaryEn[msg]
+		res := ""
+		for _, w := range strings.Split(msg, "") {
+			v, ok := dict[strings.ToUpper(w)]
 			if ok {
-				return v
+				res += v
+				res += " "
 			}
-		} else {
-			res := ""
-			for _, w := range strings.Split(msg, "") {
-				v, ok := d.dictionaryEnMorze[strings.ToUpper(w)]
-				if ok {
-					res += v
-					res += " "
-				}
-			}
-			return res
 		}
+		return res
 	}
 	return "Not valid"
 }
 
 func (d *Dictionary) Parse(lang int, msg string) string {
 	res := ""
+	dict := d.selectMap(lang)
 	if d.mod == 0 {
-		if lang == 1 {
-			for _, word := range parseString(msg) {
-				v, ok := d.dictionaryRu[word]
-				if ok {
-					res += v + " "
-				} else {
-					res += " (not valid - '" + word + "' ) "
-				}
-			}
-
-		} else {
-			for _, word := range parseString(msg) {
-				v, ok := d.dictionaryEn[word]
-				if ok {
-					res += v + " "
-				} else {
-					res += " (not valid - '" + word + "' ) "
-				}
+		for _, word := range parseString(msg) {
+			v, ok := dict[word]
+			if ok {
+				res += v + " "
+			} else {
+				res += " (not valid - '" + word + "' ) "
 			}
 		}
 	} else {
-		if lang == 1 {
-			for _, word := range strings.Split(msg, "") {
-				v, ok := d.dictionaryRuMorze[strings.ToUpper(word)]
-				if ok {
-					res += v + " "
-				} else {
-					res += " (not valid - '" + word + "' ) "
-				}
-			}
-
-		} else {
-			for _, word := range strings.Split(msg, "") {
-				v, ok := d.dictionaryEnMorze[strings.ToUpper(word)]
-				if ok {
-					res += v + " "
-				} else {
-					res += " (not valid - '" + word + "' ) "
-				}
+		for _, word := range strings.Split(msg, "") {
+			v, ok := dict[strings.ToUpper(word)]
+			if ok {
+				res += v + " "
+			} else {
+				res += " (not valid - '" + word + "' ) "
 			}
 		}
 	}
 	return res
+}
+
+func (d *Dictionary) selectMap(lang int) map[string]string {
+	if d.mod == 0 {
+		if lang == 1 {
+			return d.dictionaryRu
+		} else {
+			return d.dictionaryEn
+		}
+	} else {
+		if lang == 1 {
+			return d.dictionaryRuMorze
+		} else {
+			return d.dictionaryEnMorze
+		}
+	}
 }
 
 func parseString(msg string) []string {

@@ -43,11 +43,13 @@ func main() {
 				}
 			}
 
-			if lang == 1 {
-				println("Выберите в каком режиме будете набирать: ( 0 - по словам, 1 - целиком )")
-			} else {
-				println("Choose in which mode you will type: ( 0 - by words, 1 - in whole )")
-			}
+			modQ(lang,
+				func() {
+					println("Choose in which mode you will type: ( 0 - by words, 1 - in whole )")
+				},
+				func() {
+					println("Выберите в каком режиме будете набирать: ( 0 - по словам, 1 - целиком )")
+				})
 
 			rawText, _ = reader.ReadString('\n')
 			text = strings.Split(rawText, "\n")[0]
@@ -64,14 +66,25 @@ func main() {
 
 		println("Enter text: ")
 
-		if mod == 0 {
-			text, _ := reader.ReadString('\n')
-			println("Result: ", dict.ParseByWorld(lang, strings.Split(text, "\n")[0]))
-			print("\n")
-		} else {
-			text, _ := reader.ReadString('\n')
-			println("Result: ", dict.Parse(lang, strings.Split(text, "\n")[0]))
-			print("\n")
-		}
+		modQ(mod,
+			func() {
+				text, _ := reader.ReadString('\n')
+				println("Result: ", dict.ParseByWorld(lang, strings.Split(text, "\n")[0]))
+				print("\n")
+			},
+			func() {
+				text, _ := reader.ReadString('\n')
+				println("Result: ", dict.Parse(lang, strings.Split(text, "\n")[0]))
+				print("\n")
+			},
+		)
+	}
+}
+
+func modQ(mod int, cbOne func(), cbTwo func()) {
+	if mod == 0 {
+		cbOne()
+	} else {
+		cbTwo()
 	}
 }
